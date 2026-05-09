@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HighLin工程崗位分工</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #fafafa;
+            color: #333;
+        }
+        /* Custom scrollbar for a cleaner look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d1d5db; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af; 
+        }
+        /* Input and select base styles to ensure minimalist look */
+        .form-control {
+            @apply w-full border border-gray-300 rounded-md px-4 py-2.5 bg-white text-sm focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition-colors duration-200;
+        }
+        .btn-primary {
+            @apply bg-black text-white px-6 py-2.5 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors duration-200 flex items-center justify-center;
+        }
+        .btn-secondary {
+            @apply bg-white text-black border border-gray-300 px-6 py-2.5 rounded-md text-sm font-medium hover:bg-gray-50 transition-colors duration-200 flex items-center justify-center;
+        }
+        .btn-whatsapp {
+            @apply bg-[#25D366] text-white px-6 py-2.5 rounded-md text-sm font-medium hover:bg-[#1DA851] transition-colors duration-200 flex items-center justify-center;
+        }
+    </style>
+</head>
+<body class="min-h-screen py-10 px-4 sm:px-6 lg:px-8 flex justify-center items-start">
+
+    <div class="max-w-2xl w-full bg-white shadow-sm border border-gray-100 rounded-xl overflow-hidden">
+        
+        <!-- Header -->
+        <div class="px-8 py-6 border-b border-gray-100">
+            <h1 class="text-2xl font-semibold text-gray-900 tracking-tight">HighLin工程崗位分工</h1>
+            <p class="text-sm text-gray-500 mt-1">請填寫以下工程及人員分配資訊</p>
+        </div>
+
+        <div class="p-8 space-y-8">
+            
+            <!-- Project Name -->
+            <div class="space-y-2">
+                <label for="projectName" class="block text-sm font-medium text-gray-700">工程</label>
+                <input type="text" id="projectName" class="form-control" placeholder="輸入工程名稱">
+            </div>
+
+            <!-- Leader -->
+            <div class="space-y-2">
+                <label for="leader" class="block text-sm font-medium text-gray-700">Leader</label>
+                <select id="leader" class="form-control appearance-none">
+                    <option value="" disabled selected>選擇 Leader</option>
+                    <option value="Lam">Lam</option>
+                    <option value="Carson">Carson</option>
+                    <option value="聰">聰</option>
+                    <option value="聰聰">聰聰</option>
+                    <option value="華">華</option>
+                    <option value="智樂">智樂</option>
+                    <option value="其他">其他</option>
+                </select>
+                <!-- 其他 Leader 文字輸入 (預設隱藏) -->
+                <input type="text" id="leaderOther" class="form-control mt-2 hidden" placeholder="請輸入 Leader 姓名">
+            </div>
+
+            <!-- 崗位 (Dynamic List) -->
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <label class="block text-sm font-medium text-gray-700">崗位</label>
+                    <button type="button" id="addRoleBtn" class="text-sm text-black hover:text-gray-600 font-medium flex items-center gap-1 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        新增崗位
+                    </button>
+                </div>
+                
+                <div id="rolesContainer" class="space-y-3">
+                    <!-- 動態增加的崗位行會在這裡 -->
+                </div>
+                <p id="emptyStateText" class="text-sm text-gray-400 italic text-center py-4 bg-gray-50 rounded-md border border-dashed border-gray-200">
+                    目前尚未新增任何崗位，請點擊右上方「新增崗位」按鈕。
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Divider -->
+        <div class="w-full h-px bg-gray-100"></div>
+
+        <!-- Preview Section -->
+        <div class="p-8 bg-gray-50 space-y-6">
+            <div>
+                <h3 class="text-sm font-medium text-gray-700 mb-3">預覽</h3>
+                <div class="bg-white border border-gray-200 rounded-md p-4 min-h-[150px]">
+                    <pre id="previewText" class="whitespace-pre-wrap text-sm text-gray-800 font-mono"></pre>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-3 pt-2">
+                <button id="whatsappBtn" class="btn-whatsapp w-full">
+                    <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                    傳送至 WhatsApp
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data and DOM Elements
+        const elements = {
+            projectName: document.getElementById('projectName'),
+            leader: document.getElementById('leader'),
+            leaderOther: document.getElementById('leaderOther'),
+            addRoleBtn: document.getElementById('addRoleBtn'),
+            rolesContainer: document.getElementById('rolesContainer'),
+            emptyStateText: document.getElementById('emptyStateText'),
+            previewText: document.getElementById('previewText'),
+            whatsappBtn: document.getElementById('whatsappBtn')
+        };
+
+        const staffNames = ['Lam', 'Carson', '聰', '聰聰', '華', '智樂'];
+        let roleCount = 0;
+
+        // Handle Leader 'Other' selection
+        elements.leader.addEventListener('change', (e) => {
+            if (e.target.value === '其他') {
+                elements.leaderOther.classList.remove('hidden');
+            } else {
+                elements.leaderOther.classList.add('hidden');
+                elements.leaderOther.value = ''; // clear value
+            }
+            updatePreview();
+        });
+
+        // Event listeners for inputs to trigger preview update
+        elements.projectName.addEventListener('input', updatePreview);
+        elements.leaderOther.addEventListener('input', updatePreview);
+
+        // Add new role row
+        elements.addRoleBtn.addEventListener('click', () => {
+            roleCount++;
+            elements.emptyStateText.style.display = 'none';
+
+            const rowId = `role-row-${roleCount}`;
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'flex flex-col sm:flex-row gap-3 items-start sm:items-center bg-white p-3 rounded-md border border-gray-200 shadow-sm transition-all duration-200 hover:border-gray-300 relative group';
+            rowDiv.id = rowId;
+
+            // Name Select options
+            let nameOptions = `<option value="" disabled selected>選擇人員</option>`;
+            staffNames.forEach(name => {
+                nameOptions += `<option value="${name}">${name}</option>`;
+            });
+            nameOptions += `<option value="其他">其他</option>`;
+
+            rowDiv.innerHTML = `
+                <div class="w-full sm:w-5/12">
+                    <select class="form-control appearance-none role-name-select" data-row-id="${rowId}">
+                        ${nameOptions}
+                    </select>
+                </div>
+                <div class="w-full sm:w-5/12 hidden role-name-other-container" id="other-container-${rowId}">
+                     <input type="text" class="form-control role-name-other" placeholder="輸入姓名">
+                </div>
+                <div class="w-full sm:w-4/12">
+                    <select class="form-control appearance-none role-type-select">
+                        <option value="" disabled selected>選擇崗位</option>
+                        <option value="主力">主力</option>
+                        <option value="支援">支援</option>
+                    </select>
+                </div>
+                <button type="button" class="text-gray-400 hover:text-red-500 transition-colors p-2 sm:p-0 remove-role-btn" aria-label="移除此行">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            `;
+
+            elements.rolesContainer.appendChild(rowDiv);
+
+            // Add event listeners to the new elements
+            const nameSelect = rowDiv.querySelector('.role-name-select');
+            const otherContainer = rowDiv.querySelector('.role-name-other-container');
+            const otherInput = rowDiv.querySelector('.role-name-other');
+            const typeSelect = rowDiv.querySelector('.role-type-select');
+            const removeBtn = rowDiv.querySelector('.remove-role-btn');
+
+            nameSelect.addEventListener('change', (e) => {
+                if (e.target.value === '其他') {
+                    // Show other input, shrink select slightly
+                    e.target.parentElement.classList.remove('sm:w-5/12');
+                    e.target.parentElement.classList.add('sm:w-3/12');
+                    otherContainer.classList.remove('hidden');
+                } else {
+                    e.target.parentElement.classList.add('sm:w-5/12');
+                    e.target.parentElement.classList.remove('sm:w-3/12');
+                    otherContainer.classList.add('hidden');
+                    otherInput.value = '';
+                }
+                updatePreview();
+            });
+
+            otherInput.addEventListener('input', updatePreview);
+            typeSelect.addEventListener('change', updatePreview);
+            
+            removeBtn.addEventListener('click', () => {
+                rowDiv.remove();
+                if (elements.rolesContainer.children.length === 0) {
+                    elements.emptyStateText.style.display = 'block';
+                }
+                updatePreview();
+            });
+
+            updatePreview();
+        });
+
+        // Update Preview Text
+        function updatePreview() {
+            const project = elements.projectName.value.trim() || '[未填寫]';
+            
+            let leaderName = elements.leader.value;
+            if (leaderName === '其他') {
+                leaderName = elements.leaderOther.value.trim() || '[未填寫姓名]';
+            } else if (!leaderName) {
+                leaderName = '[未選擇]';
+            }
+
+            let previewHtml = `【 HighLin 工程崗位分工 】\n\n`;
+            previewHtml += `工程：${project}\n`;
+            previewHtml += `Leader：${leaderName}\n\n`;
+            previewHtml += `[ 崗位分配 ]\n`;
+
+            const rows = elements.rolesContainer.querySelectorAll('.flex');
+            let hasRoles = false;
+
+            if (rows.length > 0) {
+                rows.forEach(row => {
+                    const nameSelect = row.querySelector('.role-name-select');
+                    const otherInput = row.querySelector('.role-name-other');
+                    const typeSelect = row.querySelector('.role-type-select');
+
+                    let name = nameSelect.value;
+                    if (name === '其他') {
+                        name = otherInput.value.trim() || '?';
+                    } else if (!name) {
+                        name = '?';
+                    }
+
+                    const type = typeSelect.value || '?';
+
+                    // Only add if at least name or type is somewhat filled
+                    if(name !== '?' || type !== '?') {
+                         previewHtml += `- ${name} (${type})\n`;
+                         hasRoles = true;
+                    }
+                });
+            }
+            
+            if (!hasRoles) {
+                previewHtml += `- 尚未分配\n`;
+            }
+
+            elements.previewText.textContent = previewHtml;
+        }
+
+        // WhatsApp Share
+        elements.whatsappBtn.addEventListener('click', () => {
+            const textToSend = encodeURIComponent(elements.previewText.textContent);
+            // Specified WhatsApp number
+            const phoneNumber = '85268279995'; 
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${textToSend}`;
+            window.open(whatsappUrl, '_blank');
+        });
+
+        // Initialize preview on load
+        updatePreview();
+    </script>
+</body>
+</html>
